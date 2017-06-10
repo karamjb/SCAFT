@@ -1,0 +1,317 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Nunito', sans-serif;
+}
+
+html, body {
+  background: -webkit-linear-gradient(330deg, #17bebb, #f0a6ca);
+  background: linear-gradient(120deg, #17bebb, #f0a6ca);
+  overflow: hidden;
+}
+
+.container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+.container h1 {
+  margin: 0.5em auto;
+  color: #FFF;
+  text-align: center;
+}
+
+.chatbox {
+  background: rgba(255, 255, 255, 0.05);
+  width: 900px;
+  height: 70vh;
+  border-radius: 0.2em;
+  position: relative;
+  box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.1);
+
+}
+.other .chatbox__messages__user-message--ind-message {
+  float: right;
+}
+.other .chatbox__messages__user-message--ind-message:after {
+  content: '';
+  position: relative;
+ /* margin: -1.5em -17.06em;*/
+  width: 0;
+  height: 0;
+  /*border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 5px solid rgba(255, 255, 255, 0.15);  */
+    top:0;
+    left: 100%;
+}
+.me .chatbox__messages__user-message--ind-message {
+  float: left;
+}
+.me .chatbox__messages__user-message--ind-message:after {
+    content: '';
+    position: relative;
+    width: 0;
+    height: 0;
+    /*border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 5px solid rgba(255, 255, 255, 0.15);*/
+    top: 0;
+    right: 1.0%;
+
+}
+.chatbox__messages__user-message {
+  width: 650px;
+}
+.chatbox__messages__user-message--ind-message {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.8em 0;
+  height: auto;
+  width: 65%;
+  border-radius: 5px;
+  margin: 0.6em 0.4em;
+  /*overflow: auto;*/
+}
+.chatbox__messages__user-message--ind-message > p.name {
+  color: #FFF;
+  font-size: 1em;
+}
+.chatbox__messages__user-message--ind-message > p.message {
+  color: #FFF;
+  font-size: 0.7em;
+  margin: 0 2.8em;
+}
+.chatbox__user-list {
+  background: rgba(255, 255, 255, 0.1);
+  width: 25%;
+  height: 100%;
+  float: right;
+  border-top-right-radius: 0.2em;
+  border-bottom-right-radius: 0.2em;
+}
+.chatbox__user-list h1 {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9em;
+  padding: 1em;
+  margin: 0;
+  font-weight: 300;
+  text-align: center;
+}
+.chatbox__user, .chatbox__user--active, .chatbox__user--offline, .chatbox__user--away {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 100%;
+  margin: 1em 0.7em;
+}
+.chatbox__user--active {
+  background: rgba(23, 190, 187, 0.8);
+}
+.chatbox__user--offline {
+  background: rgba(252, 100, 113, 0.8);
+}
+.chatbox__user--away {
+  background: rgba(255, 253, 130, 0.8);
+}
+.chatbox p {
+  float: left;
+  text-align: left;
+  margin: -0.25em 2em;
+  font-size: 0.7em;
+  font-weight: 300;
+  color: #FFF;
+  width: 400px;
+}
+.chatbox form {
+  background: #222;
+}
+.chatbox form input {
+  background: rgba(255, 255, 255, 0.03);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border: none;
+  width: 75%;
+  padding: 1.2em;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+}
+.chatbox form button {
+  background: rgba(255, 255, 255, 0.03);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: none;
+  width: 25%;
+  padding: 1.2em;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+}
+.chatbox form button:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.join {
+  margin-top: 5em;
+  background: rgba(255, 255, 255, 0.05);
+  width: 900px;
+  height: 75%;
+  border-radius: 0.2em;
+  position: relative;
+  display: block;
+  box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.1);
+
+}
+.de{
+
+}
+.de input{
+    padding: 0.8em;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.9);
+    border: none;
+    font-weight: 300;
+    outline: none;
+    margin: 0.5em;
+}
+.de label{
+    font-weight: 200;
+    font-size: small;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.5em;
+}
+.join form {
+  background: #222;
+}
+.join form input {
+  background: rgba(255, 255, 255, 0.03);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border: none;
+  width: 75%;
+  padding: 1.2em;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+}
+.join form button {
+  background: rgba(255, 255, 255, 0.03);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: none;
+  width: 25%;
+  padding: 1.2em;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+  cursor: pointer;
+}
+.join form button:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:-moz-placeholder {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.9);
+}
+.chatbox_scroll{
+    overflow-x: hidden;
+    display: block;
+    height: 90%;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.hide{
+    display: none;
+    visibility : hidden;
+    height : 0px;
+    width : 0px;
+    margin : 0px;
+    padding : 0px;
+    overflow : hidden;
+}
+
+.selected{
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user_item{
+
+}
+
+.classPrivateMSG{
+    border: solid 2px rgba(255,255,255,0.5);
+
+}
+
+.exit_bt {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    padding: 1.2em;
+    outline: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    cursor: pointer;
+}
+
+.message button{
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    width: 50%;
+    padding: 1.2em;
+    outline: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    cursor: pointer;
+    position: relative;
+    bottom: 0;
+    left: -1.4em;
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.disable{
+    pointer-events: none;
+}

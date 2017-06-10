@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>SCAFT-Secure Chat and File Transfer</title>
+    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css' />
+
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+<div class='container' ng-cloak ng-app="chatApp">
+    <h1>Secure Chat and File Transfer (SCAFT)</h1>
+
+    <div id="content_chat">
+        <div class='chatbox'  ng-controller="MessageCtrl as chatMessage">
+            <div id="userList" class='chatbox__user-list'>
+                <h1>User list</h1>
+
+                <div ng-repeat="user in users" >
+                    <div class='chatbox__user--{{user.Status}}'>
+                        <p>{{user.Name}}</p>
+                    </div>
+                </div>
+            </div>
+<!--
+            <div id="chat_tab" class="tab">
+                <button class="tablinks" onclick="openCity(event, 'All')">All</button>
+            </div>
+-->
+
+            <!--
+            <div id="chat_tab_content">
+                <div id="All" class="tabcontent">
+
+                </div>
+            </div>-->
+
+            <div class="chatbox_scroll" id="chatbox_s">
+                <div class="chatbox__messages">
+                    <div class="chatbox__messages__user-message me">
+                        <div class="chatbox__messages__user-message--ind-message">
+                            <p class="name">SCAFT</p>
+                            <br/>
+                            <p class="message">Starting SCAFT </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <form>
+                <!--<input id="chatbox_input" ng-model="c" type="text" placeholder="Enter your message" ng-keypress="sendMessage($event)" >-->
+                <input id="chatbox_input" type="text" onkeypress="Send(event)" placeholder="Enter your message"  >
+                <button id="bt_sendFile" class="hide" onkeypress="ignoreEnter(this)" onclick="browseFile(this)">Browse</button>
+                <input type="file" id="browseFileInput" style="display:none">
+            </form>
+
+        </div>
+        <form>
+            <button class="exit_bt" onclick="btExitClick(this)">Exit</button>
+        </form>
+    </div>
+
+    <div id="content">
+
+        <div class="join" >
+            <div class="de">
+                <label>UI Port</label><input id="input_ui_port" type="text" placeholder="8080">
+                <label>Chat Port</label><input id="input_chat_port" type="text" placeholder="5000">
+                <label>Friend List</label><input id="input_file" type="file">
+            </div>
+            <form>
+                <input id="input_name" class="chatbox_input" type="text" placeholder="Please insert your name." class="" />
+                <button onclick="Join()">Join</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js'></script>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+
+    <script src="js/index.js"></script>
+
+
+    <script>
+        var Users = [];
+        var Message = [];
+        var sendTo = [];
+        var fileToSend = {};
+        var fileRequest = {};
+        var chatPort = document.getElementById("input_chat_port");
+        var userList = document.getElementById("userList");
+        var content_chat = document.getElementById("content_chat");
+        var content = document.getElementById("content");
+        var chat_box = document.getElementById("chatbox_input");
+        var bt_sendFile = document.getElementById("bt_sendFile");
+        var chat = document.getElementById("chatbox_s");
+
+        var chat_tab = document.getElementById("chat_tab");
+        var chat_tab_content = document.getElementById("chat_tab_content");
+        content_chat.classList.add("hide");
+        var webSocket=null;
+        var myName;
+
+        function Join(e) {
+
+            var name = document.getElementById("input_name").value;
+            var UiPort = document.getElementById("input_ui_port").value;
+
+            var port = 8080;
+            if (UiPort.length != 0) {
+                port = Number(UiPort);
+            }
+            if (name.length != 0) {
+                myName = name;
+                webSocket = new WebSocket('ws://localhost:'+port+'/WebSocketSample');
+                webSocket.onerror = function(event) {
+                    onError(event)
+                };
+
+                webSocket.onopen = function(event) {
+                    onOpen(event)
+                };
+
+                webSocket.onclose = function (event) {
+                    content_chat.classList.add("hide");
+                    content.classList.remove("hide");
+                };
+
+                webSocket.onmessage = function(event) {
+                    onMessage(event)
+                };
+            }
+            else{
+                alert("Please insert your name.")
+            }
+        }
+
+        function onOpen(event) {
+            content_chat.classList.remove("hide");
+            content.classList.add("hide");
+
+
+            startListener();
+        }
+
+        function onError(event) {
+            alert("Can not connect the Ui Proxy");
+            content_chat.classList.add("hide");
+            content.classList.remove("hide");
+        }
+
+        function onMessage(event) {
+            console.log(event.data);
+            var msg = JSON.parse(event.data);
+            switch (msg.messageType){
+                case 'startListener':
+                    console.log(msg.Result);
+                    if(msg.Result=="OK"){
+                        getUsersList();
+                        window.setInterval(function(){
+                            send_Hello();
+                        }, 30000);
+                    } else {
+                        alert("Cant start the chat server");
+                        content.classList.remove("hide");
+                        content_chat.classList.add("hide");
+                    }
+                    break;
+                case 'getUsersList':
+                    if(msg.Result=="OK"){
+                        Users = msg.Users;
+                        refreshUserList();
+                    }
+                    break;
+                case 'txtMessage':
+                    if(msg.Result=="OK"){
+                        addMessage(msg);
+                    }
+                    break;
+                case 'fileRequest':
+                   /* messageType:"fileRequest",
+                        fileName:fn,
+                    from:myName,
+                    to:sendTo*/
+                    if(msg.Result=="OK"){
+                        webSocket.send(JSON.stringify(fileToSend));
+                    }else if(msg.Result=="Fail"){
+                        //console.log("don`t send the file");
+                    } else {
+                        if(msg.from!=myName){
+                            chat.innerHTML += makeMessageFileUi(msg);
+                            chat.scrollTop = chat.scrollHeight;
+                            fileRequest = msg;
+                        }
+                    }
+                    break;
+                case 'file':
+                    if(msg.Result=="OK")
+                        addMessage(msg);
+                    break;
+            }
+            //if(msg.Result=="Fail")
+            console.log(msg);
+        }
+
+        var port = 5000;
+        function startListener() {
+            if(chatPort.value.length!=0){
+                port = chatPort.value;
+            }
+            var msg = {
+                messageType: "startListener",
+                name: myName,
+                port: port
+            };
+            webSocket.send(JSON.stringify(msg));
+        }
+
+        function send_Hello(){
+            var Hello={
+                messageType:'Hello',
+                name:myName,
+                listenerPort:port,
+                date:new Date().getDate().toString()
+            };
+            webSocket.send(JSON.stringify(Hello));
+
+        }
+
+        function closeEditorWarning(){
+            if(webSocket!=null){
+                webSocket.close();
+            }
+        }
+
+        window.onbeforeunload = closeEditorWarning;
+
+        function Send(e) {
+            if (e.keyCode === 13) { //Enter keycode
+                var _to = sendTo;
+                if(sendTo.length==0)
+                    _to = "*";
+                var msg = {
+                    messageType: 'txtMessage',
+                    message: chat_box.value,
+                    to: _to,
+                    from: myName,
+                    date: new Date().toDateString()
+                };
+                chat_box.value = "";
+                webSocket.send(JSON.stringify(msg));
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        function ignoreEnter(e) {
+            if (e.keyCode === 13) { //Enter keycode
+                    e.preventDefault();
+                }
+        }
+
+        function getUsersList() {
+            var msg={
+              messageType:"getUsersList"
+            };
+            webSocket.send(JSON.stringify(msg));
+        }
+
+        function refreshUserList() {
+            userList.innerHTML = "<h1>User list</h1>";
+            userList.innerHTML+="<div class='selected user_item' onclick='selectChatUser(this)' >" +
+                "<div class='chatbox__user--active'>" +
+                "<p id='user_chat_all'>All</p> </div> </div>";
+            for(var i=0;i<Users.length;i++){
+                if(Users[i].name=="unknown")
+                    Users[i].status = "offline";
+                userList.innerHTML += "<div  class='user_item' onclick='selectChatUser(this)'>" +
+                    "<div class='chatbox__user--" + Users[i].status + "'>" +
+                    "<p id='user_chat_" + i + "' >" + Users[i].name + " </p> </div> </div>";
+            }
+        }
+
+        function addMessage(M) {
+            Message.push(M);
+            chat.innerHTML += makeMessageUi(M);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function makeMessageUi(M) {
+            var cssClass="other";
+            var senderName=M.from;
+            var privateMSG = "";
+            var classPrivateMSG = "";
+            var msgTo = "";
+            if(M.to!="*"){
+                privateMSG = "- Private Message -";
+                classPrivateMSG = "classPrivateMSG";
+            }
+            if (senderName == myName) {
+                cssClass = "me";
+                senderName = "Me";
+                if(M.to!="*"){
+                    msgTo = M.to.name;
+                }
+            }
+            return "<div class='chatbox__messages '>" +
+            "<div class='chatbox__messages__user-message " + cssClass + "'><div class='chatbox__messages__user-message--ind-message "+classPrivateMSG+"'>" +
+            "<p class='name'>" + senderName + " " + privateMSG + " " + msgTo +"</p><br/>" +
+            "<p class='message'>" + M.message + "</p> </div> </div> </div>";
+        }
+
+        function makeMessageFileUi(M) {
+            var cssClass="other";
+            var senderName=M.from;
+            var privateMSG = "";
+            var classPrivateMSG = "";
+            var msgTo = "";
+            if(M.to!="*"){
+                privateMSG = "- Private Message -";
+                classPrivateMSG = "classPrivateMSG";
+            }
+            if (senderName == myName) {
+                cssClass = "me";
+                senderName = "Me";
+                if(M.to!="*"){
+                    msgTo = M.to.name;
+                }
+            }
+            return "<div class='chatbox__messages '>" +
+                "<div class='chatbox__messages__user-message " + cssClass + "'><div class='chatbox__messages__user-message--ind-message " + classPrivateMSG + "'>" +
+                "<p class='name'>" + senderName + " " + privateMSG + " " + msgTo + "</p><br/>" +
+                "<p class='message'>File Name: " + M.fileName + "</p>" +
+                "<p class='message'><button onclick='responseOKToFile(this)'>Accept</button><button onclick='responseFailToFile(this)'>Reject</button></p> </div> </div> </div>";
+        }
+
+        function responseOKToFile(e) {
+            fileRequest.Result = "OK";
+            responseFile(e);
+
+        }
+
+        function responseFailToFile(e) {
+            fileRequest.Result = "Fail";
+            responseFile(e);
+        }
+
+        function responseFile(e) {
+            var from = fileRequest.to.name;
+            fileRequest.to = fileRequest.from;
+            fileRequest.from = from;
+            e.parentNode.classList.add("disable");
+            webSocket.send(JSON.stringify(fileRequest));
+        }
+
+        function selectChatUser(e) {
+            var userChatLinks = document.getElementsByClassName("user_item");
+            if(e.firstElementChild.classList.contains("chatbox__user--offline"))
+                return;
+            for (i = 0; i < userChatLinks.length; i++) {
+                userChatLinks[i].classList.remove("selected");
+            }
+            e.classList.add("selected");
+            if(e.firstElementChild.firstElementChild.id.split("_")[2]=="all") {
+                sendTo = [];
+                bt_sendFile.classList.add("hide");
+                if(!bt_sendFile.classList.contains("hide")) {
+                    bt_sendFile.classList.add("hide");
+                }
+
+                return;
+            }
+            sendTo = Users[Number(e.firstElementChild.firstElementChild.id.split("_")[2])];
+            bt_sendFile.classList.remove("hide");
+
+        }
+
+        /*
+        function createChatLink(event) {
+            if(document.getElementById("chat_tab_link_" + event.innerText)==null) {
+                if (event.innerText != "unknow1n") {
+                    chat_tab.innerHTML += "<button id='chat_tab_link_" + event.innerText + "' class='tablinks' onclick='openChat(this,event.innerText)'>" + event.innerText + "</button>";
+                    chat_tab_content.innerHTML += '<div id="chat_tab_content_' + event.innerText + '" class="tabcontent">' +
+                        '<div class="chatbox_scroll" id="chatbox_s"> <div class="chatbox__messages"> <div class="chatbox__messages__user-message me">' +
+                        '<div class="chatbox__messages__user-message--ind-message"> <p class="name">'+event.innerText+'</p>' +
+                        '<br/><p class="message">Starting SCAFT '+event.innerText+'</p></div> </div> </div> </div> </div>';
+                }
+            }
+        }*/
+
+        function openChat(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function browseFile(e) {
+            document.getElementById("browseFileInput").click();
+        }
+
+        function readSingleFile(e) {
+            if (e.which == 13) //13 is the keycode referring to enter.
+            {
+                console.log("Enter exit bt");
+                e.preventDefault();
+                return false; //return false on the event.
+            }
+            var files = e.target.files;
+            var file = files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var contents = e.target.result;
+                var filePath = document.getElementById('browseFileInput').value;
+                var fileName = filePath.split(/(\\|\/)/g).pop();
+                fileToSend = {
+                    messageType: "fileMSG",
+                    fileName: fileName,
+                    from: myName,
+                    to: sendTo,
+                    data: btoa(contents)
+                };
+                sendFileToUser(fileName);
+            };
+            reader.readAsBinaryString(file);
+        }
+
+        function sendFileToUser(fn) {
+            var file={
+                messageType:"fileRequest",
+                fileName:fn,
+                from:myName,
+                to:sendTo
+            };
+            webSocket.send(JSON.stringify(file));
+        }
+
+
+        document.getElementById('browseFileInput')
+            .addEventListener('change', readSingleFile, false);
+
+        function btExitClick(e) {
+            console.log("exit bt clicked");
+            if (e.which == 13) //13 is the keycode referring to enter.
+            {
+                console.log("Enter exit bt");
+                e.preventDefault();
+                return false;
+            }
+            console.log("exit bt");
+            myName = "unknown";
+            send_Hello();
+            webSocket.close();
+        }
+
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            document.getElementById('browseFileInput').addEventListener('change', readSingleFile, false);
+        } else {
+            alert('The File APIs are not fully supported in this browser.');
+        }
+
+    </script>
+
+</body>
+</html>
