@@ -1,13 +1,13 @@
 # SCAFT
-#Communication and Information Security
-##Assignment 1: SCAFT
+# Communication and Information Security
+## Assignment 1: SCAFT
 
-#Students:
-##Karam Jabareen - 204495923
-##Adam Sagas - 311483630
+# Students:
+## Karam Jabareen - 204495923
+## Adam Sagas - 311483630
 
 
-##Roles:
+## Roles:
 Karam Jabareen – Building and designing the interface, building the transference of messages and files and working on the encryption and decryption methods.
 (Worked for 70 hours)
 Adam Sagas – Assisting in building the transference, encryption and decryption algorithms and testing the program.
@@ -22,10 +22,10 @@ Adam Sagas – Assisting in building the transference, encryption and decryption
 
 
 
-##Instructions for compiling the program:
+## Instructions for compiling the program:
 Read the file “HowToRunTest.txt” for instructions.
 
-##Instructions for running the program:
+## Instructions for running the program:
 In order to run the program, you must execute the command:
 java -jar SCAFTCore.jar {ui port} {neighbors text file path} 
 for example:
@@ -46,7 +46,7 @@ The format of the neighbor file should contain each user’s IP, port and passwo
 
 
 
-##Explanation of how the program works:
+## Explanation of how the program works:
 
 All messages are in JSON format. Every message has a “message type” property alongside other different properties.
 The different types of messages:
