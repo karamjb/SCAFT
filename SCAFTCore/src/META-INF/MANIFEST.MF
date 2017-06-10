@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: bcprov-jdk15on-157.jar bcprov-jdk15on-157.jar javax.servle
+ t-api-3.1.0.jar jetty-all-9.2.13.v20150730.jar
+Main-Class: Main
+
