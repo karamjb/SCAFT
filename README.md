@@ -1,9 +1,8 @@
 # Secure Chat And File Transfer - SCAFT
 ![Secure Chat And File Transfer](/TestSpace/chat.png)
-# Communication and Information Security
-## Assignment 1: SCAFT
+## Communication and Information Security - Assignment 1: SCAFT
 
-# Students:
+## Students:
  Karam Jabareen - 204495923
  Adam Sagas - 311483630
 
