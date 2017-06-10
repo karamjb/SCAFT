@@ -23,6 +23,7 @@ Read the file `HowToRunTest.txt` for instructions.
 ## Instructions for running the program:
 In order to run the program, you must execute the command:
 `java -jar SCAFTCore.jar {ui port} {neighbors text file path} `
+
 for example:
 `java -jar SCAFTCore.jar 8080 C:\Users\TOSHIBA\Desktop\cis\hw1\neighbors5000.txt`
 
@@ -49,7 +50,7 @@ The different types of messages:
 *	`getUsersList` – When the SCAFTCore receives this type of message, it returns all users with each one’s status.
 *	`Hello` – SCAFTCore sends this type of message every 30 seconds. It informs the other users that the sender is connected.
 *	`txtMessage` – This type of message contains the plain text and to whom the message is sent to (receiver’s information). If the `to` property equals `*` the message is sent to everyone, else if it equals to a specific user, then it is sent to him personality.
-*	`fileRequest` – Sends a request to a specific user if he agrees to accept the upcoming file. If the receiver accepts it will answer with a `OK` message else it will answer with a “Fail” message.
+*	`fileRequest` – Sends a request to a specific user if he agrees to accept the upcoming file. If the receiver accepts it will answer with a ``OK`` message else it will answer with a ``Fail`` message.
 *	`fileMSG` – This type of message contains the name and data of the file. The maximum size of file to be sent is 20 megabytes.
 *	`File` – The SCAFTCore sends this type of message to itself when the transference of the file is completed. When receiving this message, the program opens the folder containing the file.
 
