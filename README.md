@@ -8,10 +8,10 @@
 
 
 ## Roles:
-Karam Jabareen – Building and designing the interface, building the transference of messages and files and working on the encryption and decryption methods.
-(Worked for 70 hours)
-Adam Sagas – Assisting in building the transference, encryption and decryption algorithms and testing the program.
-(Worked for 30 hours)
+
+* Karam Jabareen – Building and designing the interface, building the transference of messages and files and working on the encryption and decryption methods.(Worked for 70 hours)
+
+* Adam Sagas – Assisting in building the transference, encryption and decryption algorithms and testing the program.(Worked for 30 hours)
 
 
 
