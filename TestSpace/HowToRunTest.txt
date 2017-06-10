@@ -1,0 +1,8 @@
+step number 1:
+modify the neighbors file path into the bats files
+step number 2:
+run the bats files
+step number 3:
+open the join.html and join your chat room
+
+Enjoy with secret chat with your friend!

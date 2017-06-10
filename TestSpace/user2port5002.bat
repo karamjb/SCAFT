@@ -1,0 +1,1 @@
+java -jar SCAFTCore.jar 8100 C:\Users\TOSHIBA\Desktop\cis\hw1\TestSpace\neighbors5002.txt
