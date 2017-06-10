@@ -1,4 +1,5 @@
 # Secure Chat And File Transfer - SCAFT
+![Secure Chat And File Transfer](/TestSpace/chat.png)
 # Communication and Information Security
 ## Assignment 1: SCAFT
 
